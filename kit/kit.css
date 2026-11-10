@@ -1,0 +1,37 @@
+/* Luna Motion Kit: the few styles the effects need. Link it before your own CSS. Colours come from --lmk-* vars. */
+:root { --lmk-accent: #7c5cff; --lmk-ring: rgba(255,255,255,.85); }
+
+/* magnetic: cursor ring */
+.lmk-has-ring, .lmk-has-ring a, .lmk-has-ring button { cursor: none; }
+.lmk-ring { position: fixed; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
+  border: 1.5px solid var(--lmk-ring); pointer-events: none; z-index: 70; mix-blend-mode: difference;
+  opacity: 0; transition: width .35s cubic-bezier(.2,.8,.2,1), height .35s, margin .35s, background-color .35s, opacity .3s; }
+.lmk-ring.is-on { opacity: 1; } /* hidden until the first pointer move, so it never sits in the corner */
+.lmk-ring.is-hover { width: 74px; height: 74px; margin: -37px 0 0 -37px; background: rgba(255,255,255,.95); }
+[data-magnetic] { will-change: transform; }
+
+/* split-reveal: masked lines */
+.lmk-line { padding-bottom: .08em; margin-bottom: -.08em; }
+
+/* pin-story */
+.lmk-story--pinned { position: relative; height: 100vh; overflow: hidden; }
+.lmk-story--pinned .story-step { position: absolute; inset: 0; display: grid; place-content: center; }
+.lmk-story--static .story-step { position: static; opacity: 1 !important; transform: none !important; visibility: visible !important; margin: 0 0 3rem; }
+.lmk-story--static .story-bar { display: none; }
+
+/* hover-distort */
+.lmk-distort { position: relative; overflow: hidden; }
+.lmk-distort img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+.lmk-distort:hover img { transform: scale(1.04); }
+.lmk-distort__gl { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .4s; }
+.lmk-distort.is-gl .lmk-distort__gl { opacity: 1; }
+
+/* page-transition */
+.lmk-curtain { position: fixed; inset: 0; z-index: 90; pointer-events: none; display: grid; place-content: center;
+  clip-path: inset(100% 0 0 0); }
+.lmk-curtain span { font: 600 clamp(1.5rem, 4vw, 3rem)/1 system-ui, sans-serif; color: #0b0b12; letter-spacing: -.02em; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luna HQ Motion Demos</title>
+<meta name="description" content="Website demos by Luna HQ: 3D, scroll stories, fog cursors and motion details.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0b0912; --fg:#f4f1ff; --muted:#a59fbf; --line:rgba(255,255,255,.12); --accent:#9b7bff; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--fg); font-family:Inter,system-ui,sans-serif; min-height:100vh; overflow-x:hidden; }
+  main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:clamp(48px,10vh,120px) 16px 64px; }
+  .eyebrow { font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+  h1 { font-size:clamp(44px,8vw,104px); line-height:.95; letter-spacing:-.03em; margin:18px 0 22px; font-weight:700; }
+  .lede { max-width:620px; font-size:clamp(17px,2vw,20px); line-height:1.55; color:var(--muted); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; margin-top:56px; }
+  a.card { display:block; padding:28px; border:1px solid var(--line); border-radius:22px; color:inherit; text-decoration:none;
+    background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.01)); backdrop-filter:blur(6px);
+    transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s; }
+  a.card:hover, a.card:focus-visible { transform:translateY(-6px); border-color:rgba(155,123,255,.6); outline:none; }
+  .tag { font-size:12px; color:var(--accent); letter-spacing:.08em; text-transform:uppercase; }
+  .card h2 { font-size:26px; margin:10px 0 8px; letter-spacing:-.01em; }
+  .card p { color:var(--muted); line-height:1.5; font-size:15px; }
+  .go { margin-top:18px; display:inline-block; font-weight:500; }
+  footer { margin-top:64px; color:var(--muted); font-size:13px; }
+  @media (prefers-reduced-motion: reduce) { a.card { transition:none; } a.card:hover { transform:none; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Luna HQ · Motion demos</p>
+  <h1>Websites that<br>move with you.</h1>
+  <p class="lede">Real 3D, scroll stories, fog that follows your cursor and the small details that make a page feel made by hand. Every demo works on phones and goes still for people who turn motion off.</p>
+  <div class="grid">
+    <a class="card" href="lab/">
+      <span class="tag">Showcase</span>
+      <h2>Motion Lab</h2>
+      <p>Every effect in one place: 3D hero, fog cursor, pinned scroll story, text reveals, magnetic buttons, image ripples and page transitions.</p>
+      <span class="go">Open the lab →</span>
+    </a>
+    <a class="card" href="clinic-premium/">
+      <span class="tag">Cinematic 3D · from $3,500</span>
+      <h2>Clinic, premium</h2>
+      <p>A made-up dental studio in English and Arabic, with a 3D pearl, soft mint mist, pinned services and a curtain to the booking page.</p>
+      <span class="go">Open the demo →</span>
+    </a>
+    <a class="card" href="clinic/">
+      <span class="tag">Simple · from $300</span>
+      <h2>Clinic, simple</h2>
+      <p>The same made-up clinic as a fast one-page site: services, doctor, hours, map and booking, in English and Arabic.</p>
+      <span class="go">Open the demo →</span>
+    </a>
+  </div>
+  <footer>Demos by Luna HQ. The clinic is made up. lunahq.io</footer>
+</main>
+<script type="module">
+  import { init } from './kit/fog-cursor.js';
+  try { init(document.body, { colors: ['#7c5cff', '#2ad1c9', '#ff5c8a'], strength: 0.16 }); } catch (e) { /* works without fog */ }
+</script>
+</body>
+</html>

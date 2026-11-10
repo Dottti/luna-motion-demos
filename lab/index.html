@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luna Motion Lab</title>
+<meta name="description" content="A showcase of the motion effects Luna HQ builds into websites: 3D, fog, scroll stories and small details.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%237c5cff%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
+<link rel="stylesheet" href="../kit/kit.css">
+<link rel="stylesheet" href="lab.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script type="module" src="lab.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="brand" href="#top" data-magnetic="0.2"><span class="dot" aria-hidden="true"></span>Luna Motion Lab</a>
+  <nav aria-label="Main">
+    <a href="#effects" data-magnetic="0.25">Effects</a>
+    <a href="page2.html" data-transition data-magnetic="0.25">Page two</a>
+    <button class="fx-toggle" type="button" aria-pressed="true" data-magnetic="0.25">Effects on</button>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- hero-3d + split-reveal (chars) -->
+  <section id="hero" class="hero" aria-labelledby="hero-title">
+    <div class="hero__stage">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div id="hero-3d" class="hero__gl"></div>
+      <div class="hero__copy">
+        <p class="tag">hero-3d · split-reveal</p>
+        <h1 id="hero-title" data-split="chars">Motion you<br>can feel.</h1>
+        <p class="lede" data-split="lines">A lab of the effects we build into websites: real 3D, fog that follows your cursor, scroll stories and the small details that make a page feel made by hand.</p>
+        <a class="btn" href="#effects" data-magnetic>See the effects</a>
+      </div>
+      <p class="scroll-hint" aria-hidden="true">Scroll</p>
+    </div>
+  </section>
+
+  <!-- fog-cursor -->
+  <section id="effects" class="block fog" aria-labelledby="fog-title">
+    <p class="tag">fog-cursor</p>
+    <h2 id="fog-title" data-split="words">Move your cursor. The fog follows it, then fades.</h2>
+    <p class="note">A small fluid simulation running on your graphics card. It sleeps when the tab is hidden, and phones get a lighter version.</p>
+  </section>
+
+  <!-- split-reveal (light) -->
+  <section class="block light" aria-label="Statement">
+    <p class="tag">split-reveal · word lighting</p>
+    <p class="statement" data-split="light">Most websites stand still. The best ones answer you: they move when you scroll, lean when you point, and get the small things right. That is what this kit is for.</p>
+  </section>
+
+  <!-- pin-story -->
+  <section class="story" data-pin-story aria-label="How a site gets made">
+    <p class="tag tag--abs">pin-story</p>
+    <div class="story-step"><span class="num">01</span><h3>Brief</h3><p>One page on what the site must do and who it is for.</p></div>
+    <div class="story-step"><span class="num">02</span><h3>Design</h3><p>Layout, type and colour, agreed before any code.</p></div>
+    <div class="story-step"><span class="num">03</span><h3>Motion</h3><p>Scroll, 3D and small details, added where they help and never in the way.</p></div>
+    <div class="story-step"><span class="num">04</span><h3>Launch</h3><p>Load speed checked on a real phone, then it goes live.</p></div>
+    <div class="story-bar" aria-hidden="true"><i></i></div>
+  </section>
+
+  <!-- hover-distort -->
+  <section class="block cards" aria-labelledby="cards-title">
+    <p class="tag">hover-distort</p>
+    <h2 id="cards-title" data-split="words">Images that ripple under your cursor.</h2>
+    <div class="grid">
+      <figure data-distort><img src="img/card1.jpg" alt="Violet and pink abstract gradient with thin white wave lines" loading="lazy" width="900" height="1125"><figcaption>Ripple</figcaption></figure>
+      <figure data-distort><img src="img/card2.jpg" alt="Teal and gold abstract gradient with thin white wave lines" loading="lazy" width="900" height="1125"><figcaption>Colour shift</figcaption></figure>
+      <figure data-distort><img src="img/card3.jpg" alt="Coral and peach abstract gradient with thin white wave lines" loading="lazy" width="900" height="1125"><figcaption>Depth</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- magnetic -->
+  <section class="block magnets" aria-labelledby="mag-title">
+    <p class="tag">magnetic</p>
+    <h2 id="mag-title" data-split="words">Buttons that lean toward you.</h2>
+    <div class="row">
+      <a class="btn btn--big" href="#top" data-magnetic="0.45">Back to the top</a>
+      <a class="btn btn--big btn--ghost" href="page2.html" data-transition data-magnetic="0.45">Open page two</a>
+    </div>
+  </section>
+
+  <!-- the quiet details -->
+  <section class="block details" aria-labelledby="det-title">
+    <p class="tag">smooth-scroll · grain · page-transition</p>
+    <h2 id="det-title" data-split="words">The quiet details.</h2>
+    <ul class="facts">
+      <li><b>smooth-scroll</b><span>Scrolling glides to a stop instead of jumping. Off on phones, where native scroll feels better.</span></li>
+      <li><b>grain</b><span>A faint moving film grain over everything, so flat colour looks filmed.</span></li>
+      <li><b>page-transition</b><span>A curtain sweeps over the page when you change pages. Try "Page two" at the top.</span></li>
+      <li><b>reduced motion</b><span>If your device asks for less motion, or you press "Effects on", every effect switches off and the page stays still and readable.</span></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot">
+  <p>Luna Motion Lab. A showcase by Luna HQ.</p>
+  <a href="page2.html" data-transition data-magnetic="0.3">Page two →</a>
+</footer>
+</body>
+</html>
