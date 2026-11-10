@@ -27,6 +27,7 @@ export const T = {
     bType: 'Type of visit', bv1: 'Check-up and cleaning', bv2: 'Whitening consultation', bv3: 'Aligner consultation',
     bDay: 'Day', bTime: 'Time', bNote: 'Demo only: nothing is sent and no booking is made.',
     bCta: 'Continue', bBack: 'Back to the clinic',
+    bName: 'Your name', bPhone: 'Phone number', bSent: 'Demo only: nothing was sent.', bHint: 'We only use it to confirm your visit.',
     days: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed'],
   },
   ar: {
@@ -53,6 +54,7 @@ export const T = {
     bType: 'نوع الزيارة', bv1: 'فحص وتنظيف', bv2: 'استشارة تبييض', bv3: 'استشارة تقويم شفاف',
     bDay: 'اليوم', bTime: 'الوقت', bNote: 'نسخة تجريبية فقط: لا يُرسل شيء ولا يتم أي حجز.',
     bCta: 'متابعة', bBack: 'العودة إلى العيادة',
+    bName: 'اسمك', bPhone: 'رقم الهاتف', bSent: 'نسخة تجريبية فقط: لم يُرسل شيء.', bHint: 'نستخدمه فقط لتأكيد موعدك.',
     days: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء'],
   },
 };

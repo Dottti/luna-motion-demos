@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>try { var q = new URLSearchParams(location.search).get('lang'), l = (q === 'ar' || q === 'en') ? q : localStorage.getItem('nurvale-lang'); if (l === 'ar') { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; } } catch (e) {}</script>
 <title>Book a visit · Nurvale Dental Studio (demo)</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%232f6f66%22/%3E%3C/svg%3E">
@@ -44,11 +45,16 @@
         <label class="chip"><input type="radio" name="t"><span dir="ltr">16:30</span></label>
       </div>
     </fieldset>
+    <div class="bk-fields">
+      <div class="field"><input id="fName" name="name" type="text" autocomplete="name" placeholder=" "><label for="fName" data-i18n="bName">Your name</label><i aria-hidden="true"></i></div>
+      <div class="field"><input id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder=" " dir="ltr"><label for="fPhone" data-i18n="bPhone">Phone number</label><i aria-hidden="true"></i><small data-i18n="bHint">We only use it to confirm your visit.</small></div>
+    </div>
     <p class="bk-note" id="bk-note" data-i18n="bNote">Demo only: nothing is sent and no booking is made.</p>
     <div class="cta-row">
-      <button class="btn" type="submit" data-magnetic data-i18n="bCta">Continue</button>
+      <button class="btn bk-submit" type="submit" data-magnetic><span data-i18n="bCta">Continue</span></button>
       <a class="link" href="index.html" data-transition data-keep-lang data-magnetic="0.2" data-i18n="bBack">Back to the clinic</a>
     </div>
+    <p class="bk-toast" role="status" aria-live="polite"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span data-i18n="bSent">Demo only: nothing was sent.</span></p>
   </form>
 </main>
 <footer class="foot"><p data-i18n="foot">Demo site by Luna HQ, made-up clinic.</p></footer>

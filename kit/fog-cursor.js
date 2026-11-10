@@ -4,6 +4,7 @@
 //
 // Use:   import { init } from './kit/fog-cursor.js';
 //        const fx = init(document.body, { colors: ['#7c5cff', '#2ad1c9'], strength: 0.16 });
+//        fx.setColors(['#ff7ab6', '#7c5cff']);   // new trails take the new palette
 //        fx.destroy();
 // Light pages: { mode: 'tint', gain: 6, maxAlpha: 0.35 } draws the fog as a tinted veil (normal blending).
 // Adds one fixed full-screen <canvas> (pointer-events: none). Off under reduced motion. Low-power devices get a
@@ -222,6 +223,8 @@ export function init(root = document.body, opts = {}) {
   return {
     canvas,
     splat: (x, y, dx, dy) => splat(x, y, dx, dy, tints[0].map((v) => v * cfg.strength)),
+    // swap the palette (e.g. per section); old fog keeps its colour and fades, new trails use the new colours
+    setColors(cs) { if (!cs || !cs.length) return; tints.length = 0; cs.map(hex).forEach((t) => tints.push(t)); hue = 0; },
     destroy() {
       cancelAnimationFrame(raf); running = false;
       window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerleave', onLeave);

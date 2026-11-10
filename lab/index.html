@@ -22,8 +22,10 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
 <script type="module" src="lab.js"></script>
+<script>try { if (localStorage.getItem('lmk-fx') === 'off') document.documentElement.classList.add('lmk-fx-off'); } catch (e) {}</script>
 </head>
 <body>
+<div class="lmk-loader" aria-hidden="true"><div class="lmk-loader__in"><span class="lmk-loader__word">Luna Motion Lab</span><span class="lmk-loader__bar"><i></i></span></div></div>
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="nav">
@@ -37,12 +39,12 @@
 
 <main id="main">
   <!-- hero-3d + split-reveal (chars) -->
-  <section id="hero" class="hero" aria-labelledby="hero-title">
+  <section id="hero" class="hero" aria-labelledby="hero-title" data-bg="#07070c" data-fog="#7c5cff,#2ad1c9,#ff7ab6">
     <div class="hero__stage">
       <div class="hero__glow" aria-hidden="true"></div>
       <div id="hero-3d" class="hero__gl"></div>
       <div class="hero__copy">
-        <p class="tag">hero-3d · split-reveal</p>
+        <p class="tag">hero-3d (glass) · split-reveal</p>
         <h1 id="hero-title" data-split="chars">Motion you<br>can feel.</h1>
         <p class="lede" data-split="lines">A lab of the effects we build into websites: real 3D, fog that follows your cursor, scroll stories and the small details that make a page feel made by hand.</p>
         <a class="btn" href="#effects" data-magnetic>See the effects</a>
@@ -52,20 +54,20 @@
   </section>
 
   <!-- fog-cursor -->
-  <section id="effects" class="block fog" aria-labelledby="fog-title">
+  <section id="effects" class="block fog" aria-labelledby="fog-title" data-bg="#0b0820" data-fog="#7c5cff,#5b8cff,#b07cff">
     <p class="tag">fog-cursor</p>
     <h2 id="fog-title" data-split="words">Move your cursor. The fog follows it, then fades.</h2>
     <p class="note">A small fluid simulation running on your graphics card. It sleeps when the tab is hidden, and phones get a lighter version.</p>
   </section>
 
   <!-- split-reveal (light) -->
-  <section class="block light" aria-label="Statement">
+  <section class="block light" aria-label="Statement" data-bg="#06141a" data-fog="#2ad1c9,#5be3c7,#7c5cff">
     <p class="tag">split-reveal · word lighting</p>
     <p class="statement" data-split="light">Most websites stand still. The best ones answer you: they move when you scroll, lean when you point, and get the small things right. That is what this kit is for.</p>
   </section>
 
   <!-- pin-story -->
-  <section class="story" data-pin-story aria-label="How a site gets made">
+  <section class="story" data-pin-story aria-label="How a site gets made" data-bg="#120a1c" data-fog="#ff7ab6,#b07cff,#7c5cff">
     <p class="tag tag--abs">pin-story</p>
     <div class="story-step"><span class="num">01</span><h3>Brief</h3><p>One page on what the site must do and who it is for.</p></div>
     <div class="story-step"><span class="num">02</span><h3>Design</h3><p>Layout, type and colour, agreed before any code.</p></div>
@@ -74,8 +76,15 @@
     <div class="story-bar" aria-hidden="true"><i></i></div>
   </section>
 
+  <!-- text-distort -->
+  <section class="block td" aria-labelledby="td-title" data-bg="#160a12" data-fog="#ff5c8a,#ffb36b,#ff7ab6">
+    <p class="tag">text-distort</p>
+    <h2 id="td-title" class="td-title" data-text-distort>Touch<br>the type.</h2>
+    <p class="note">Move across the words. A shader bends them, lets them drip, splits them into colour, then lets them settle.</p>
+  </section>
+
   <!-- hover-distort -->
-  <section class="block cards" aria-labelledby="cards-title">
+  <section class="block cards" aria-labelledby="cards-title" data-bg="#0c0c18" data-fog="#7c5cff,#ff7ab6,#2ad1c9">
     <p class="tag">hover-distort</p>
     <h2 id="cards-title" data-split="words">Images that ripple under your cursor.</h2>
     <div class="grid">
@@ -86,7 +95,7 @@
   </section>
 
   <!-- magnetic -->
-  <section class="block magnets" aria-labelledby="mag-title">
+  <section class="block magnets" aria-labelledby="mag-title" data-bg="#05121a" data-fog="#2ad1c9,#5b8cff,#7c5cff">
     <p class="tag">magnetic</p>
     <h2 id="mag-title" data-split="words">Buttons that lean toward you.</h2>
     <div class="row">
@@ -96,7 +105,7 @@
   </section>
 
   <!-- the quiet details -->
-  <section class="block details" aria-labelledby="det-title">
+  <section class="block details" aria-labelledby="det-title" data-bg="#07070c" data-fog="#7c5cff,#2ad1c9,#ff7ab6">
     <p class="tag">smooth-scroll · grain · page-transition</p>
     <h2 id="det-title" data-split="words">The quiet details.</h2>
     <ul class="facts">

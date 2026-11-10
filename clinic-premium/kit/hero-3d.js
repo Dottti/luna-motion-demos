@@ -6,9 +6,12 @@
 //        const fx = await init(document.querySelector('#hero'), { tint: '#7c5cff', scrollTrigger: '#hero' });
 // Options: tint, rim (colours), scrollTrigger (selector), zoom (camera distance x, >1 = smaller object),
 //   material (MeshPhysicalMaterial overrides), morph / morphScroll (surface wobble at rest / added by scroll),
-//   satellites (n small pearls orbiting), orbit (their orbit size x), exposure.
+//   satellites (n small pearls orbiting), orbit (their orbit size x), exposure,
+//   glass (true = iridescent glass shell with a glowing core, composited over the page; cheap fake, no transmission pass).
+// Returns { group, destroy } — group holds the object (and pearls) so a page can move it with GSAP.
 // The element gets a <canvas> filling it (position it yourself). Off under reduced motion or with no WebGL:
-// a CSS gradient orb is shown instead. Low-power devices get fewer polygons and no antialiasing.
+// a CSS gradient orb is shown instead. Low-power devices get fewer polygons; edges are always antialiased
+// (pixel ratio capped at 2).
 import { motionOff, lowPower, webgl, watchVisible } from './util.js';
 
 function cssOrb(el, tint) {
@@ -45,8 +48,9 @@ export async function init(el, opts = {}) {
   const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
   const light = lowPower();
 
-  const renderer = new THREE.WebGLRenderer({ antialias: !light, alpha: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, light ? 1.25 : 1.75));
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  // desktops render at 2x even on 1x screens (cheap supersampling for one object: clean silhouettes); capped at 2
+  renderer.setPixelRatio(light ? Math.min(window.devicePixelRatio || 1, 2) : 2);
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const canvas = renderer.domElement; canvas.setAttribute('aria-hidden', 'true'); canvas.className = 'lmk-hero3d';
@@ -66,6 +70,7 @@ export async function init(el, opts = {}) {
     ...m, ...(m.sheenColor ? { sheenColor: new THREE.Color(m.sheenColor) } : {}),
   });
   if (opts.exposure) renderer.toneMappingExposure = opts.exposure;
+  const group = new THREE.Group(); scene.add(group);
   const morph0 = opts.morph ?? 0.18, morphS = opts.morphScroll ?? 0.45;
   const uni = { uTime: { value: 0 }, uMorph: { value: morph0 } };
   mat.onBeforeCompile = (sh) => {
@@ -79,7 +84,46 @@ export async function init(el, opts = {}) {
         if (dot(objectNormal, normal) < 0.) objectNormal = -objectNormal;`)
       .replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normal * disp(position);');
   };
-  const mesh = new THREE.Mesh(geo, mat); scene.add(mesh);
+  const mesh = new THREE.Mesh(geo, mat); group.add(mesh);
+  // glass: front shell is see-through in the middle and bright at the rim (fresnel), a tinted back shell gives
+  // depth, and a small glowing core sits inside. All normal alpha blending, so it sits over the page cleanly.
+  const extra = [];
+  if (opts.glass) {
+    const rimC = new THREE.Color(opts.rim || '#2ad1c9');
+    mat.transparent = true; mat.depthWrite = false; mat.color.set('#ffffff'); mat.roughness = 0.03; mat.metalness = 0;
+    mat.clearcoat = 1; mat.clearcoatRoughness = 0.02; mat.iridescence = 1; mat.iridescenceIOR = 1.6;
+    mat.iridescenceThicknessRange = [120, 900]; mat.envMapIntensity = 2.2; mat.sheen = 0; mat.specularIntensity = 1;
+    const prev = mat.onBeforeCompile;
+    mat.onBeforeCompile = (sh) => {
+      prev(sh); sh.uniforms.uRim = { value: rimC };
+      sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <dithering_fragment>', `#include <dithering_fragment>
+        float fr = pow(1. - abs(dot(normal, normalize(vViewPosition))), 2.2);
+        gl_FragColor.rgb += uRim * fr * .55;
+        gl_FragColor.a = clamp(mix(.04, 1., fr) + max(max(gl_FragColor.r, gl_FragColor.g), gl_FragColor.b) * .18, 0., 1.);`);
+    };
+    const back = new THREE.MeshPhysicalMaterial({ color: new THREE.Color(tint), roughness: 0.2, metalness: 0, transparent: true,
+      opacity: 0.16, side: THREE.BackSide, depthWrite: false, iridescence: 1, iridescenceIOR: 1.3, envMapIntensity: 1.2 });
+    back.onBeforeCompile = (sh) => {
+      sh.uniforms.uTime = uni.uTime; sh.uniforms.uMorph = uni.uMorph;
+      sh.vertexShader = 'uniform float uTime; uniform float uMorph;\n' + NOISE + sh.vertexShader
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normal * disp(position) - normal * .06;');
+    };
+    const backMesh = new THREE.Mesh(geo, back); backMesh.renderOrder = 0; mesh.renderOrder = 2; mesh.add(backMesh);
+    // glowing core: a soft radial sprite (additive), so it reads as light inside the glass, not a solid ball
+    const gc = document.createElement('canvas'); gc.width = gc.height = 128; const gx = gc.getContext('2d');
+    const gr = gx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    const tc = new THREE.Color(tint).lerp(new THREE.Color('#ffffff'), 0.35);
+    gr.addColorStop(0, 'rgba(255,255,255,0.95)'); gr.addColorStop(0.25, `rgba(${tc.r * 255 | 0},${tc.g * 255 | 0},${tc.b * 255 | 0},0.55)`);
+    gr.addColorStop(0.6, `rgba(${rimC.r * 255 | 0},${rimC.g * 255 | 0},${rimC.b * 255 | 0},0.12)`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    gx.fillStyle = gr; gx.fillRect(0, 0, 128, 128);
+    const gtex = new THREE.CanvasTexture(gc); gtex.colorSpace = THREE.SRGBColorSpace;
+    const core = new THREE.Sprite(new THREE.SpriteMaterial({ map: gtex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.85 }));
+    core.scale.setScalar(1.5); core.renderOrder = 1; mesh.add(core);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: gtex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.25 }));
+    halo.scale.setScalar(3.4); halo.renderOrder = 0; mesh.add(halo);
+    extra.push(back, gtex, core.material, halo.material);
+    extra.core = core; extra.halo = halo;
+  }
   // optional small pearls on slow tilted orbits (same material, no wobble)
   const sats = [];
   if (opts.satellites) {
@@ -88,7 +132,7 @@ export async function init(el, opts = {}) {
       clearcoat: 1, iridescence: mat.iridescence, iridescenceIOR: 1.3, iridescenceThicknessRange: mat.iridescenceThicknessRange,
       sheen: mat.sheen, sheenColor: mat.sheenColor.clone() });
     for (let i = 0; i < opts.satellites; i++) {
-      const s = new THREE.Mesh(sg, sm); const r = 0.13 + (i % 3) * 0.05; s.scale.setScalar(r); scene.add(s);
+      const s = new THREE.Mesh(sg, sm); const r = 0.13 + (i % 3) * 0.05; s.scale.setScalar(r); group.add(s);
       sats.push({ s, a: (i / opts.satellites) * Math.PI * 2, rad: (1.9 + (i % 2) * 0.35) * (opts.orbit ?? 1), sp: 0.18 + i * 0.04, tilt: 0.5 + i * 0.3 });
     }
     sats.dispose = () => { sg.dispose(); sm.dispose(); };
@@ -130,6 +174,7 @@ export async function init(el, opts = {}) {
     mesh.rotation.x = cur.x + t * 0.05; mesh.rotation.y = cur.y + t * 0.08 + scroll.p * Math.PI * 1.2;
     mesh.position.y = scroll.p * 0.5 + Math.sin(t * 0.6) * 0.06;
     mesh.scale.setScalar(1 - scroll.p * 0.25);
+    if (extra.core) { extra.core.scale.setScalar(1.5 * (1 + Math.sin(t * 1.3) * 0.06)); extra.halo.scale.setScalar(3.4 * (1 + Math.sin(t * 0.9 + 1) * 0.08)); }
     renderer.render(scene, camera);
     raf = requestAnimationFrame(frame);
   }
@@ -140,9 +185,10 @@ export async function init(el, opts = {}) {
   raf = requestAnimationFrame(frame);
 
   return {
+    group, camera,
     destroy() {
       cancelAnimationFrame(raf); unwatch(); ro.disconnect(); window.removeEventListener('pointermove', onMove);
-      if (st) st.kill(); if (sats.dispose) sats.dispose(); geo.dispose(); mat.dispose(); pmrem.dispose(); renderer.dispose(); canvas.remove();
+      if (st) st.kill(); if (sats.dispose) sats.dispose(); geo.dispose(); mat.dispose(); extra.forEach((x) => x.dispose && x.dispose()); pmrem.dispose(); renderer.dispose(); canvas.remove();
     },
   };
 }

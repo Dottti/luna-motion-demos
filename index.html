@@ -5,59 +5,135 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Luna HQ Motion Demos</title>
 <meta name="description" content="Website demos by Luna HQ: 3D, scroll stories, fog cursors and motion details.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Ccircle cx=%228%22 cy=%228%22 r=%227%22 fill=%22%237c5cff%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0b0912; --fg:#f4f1ff; --muted:#a59fbf; --line:rgba(255,255,255,.12); --accent:#9b7bff; }
+  :root { --bg:#0b0912; --fg:#f4f1ff; --muted:#a59fbf; --line:rgba(255,255,255,.12); --accent:#9b7bff; --teal:#2ad1c9; }
   * { box-sizing:border-box; margin:0; }
-  body { background:var(--bg); color:var(--fg); font-family:Inter,system-ui,sans-serif; min-height:100vh; overflow-x:hidden; }
-  main { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:clamp(48px,10vh,120px) 16px 64px; }
+  html { background:var(--bg); color-scheme:dark; }
+  body { background:var(--bg); color:var(--fg); font-family:Inter,system-ui,sans-serif; min-height:100vh; overflow-x:hidden; -webkit-font-smoothing:antialiased; }
+  main { position:relative; z-index:2; max-width:1180px; margin:0 auto; padding:clamp(48px,10vh,120px) 16px 64px; }
   .eyebrow { font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
-  h1 { font-size:clamp(44px,8vw,104px); line-height:.95; letter-spacing:-.03em; margin:18px 0 22px; font-weight:700; }
+  h1 { font:700 clamp(46px,8.4vw,112px)/.94 'Space Grotesk',Inter,sans-serif; letter-spacing:-.045em; margin:18px 0 24px; }
+  h1 .w { display:inline-block; white-space:nowrap; }
+  h1 .c { display:inline-block; }
+  .js h1 .c { opacity:0; transform:translateY(.55em) rotate(6deg); filter:blur(8px);
+    animation:hc .9s cubic-bezier(.16,1,.3,1) forwards; animation-delay:calc(var(--i) * 28ms + 120ms); }
+  @keyframes hc { to { opacity:1; transform:none; filter:none; } }
   .lede { max-width:620px; font-size:clamp(17px,2vw,20px); line-height:1.55; color:var(--muted); }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; margin-top:56px; }
-  a.card { display:block; padding:28px; border:1px solid var(--line); border-radius:22px; color:inherit; text-decoration:none;
-    background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.01)); backdrop-filter:blur(6px);
-    transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s; }
-  a.card:hover, a.card:focus-visible { transform:translateY(-6px); border-color:rgba(155,123,255,.6); outline:none; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:22px; margin-top:60px; perspective:1100px; }
+  a.card { position:relative; display:block; border:1px solid var(--line); border-radius:22px; color:inherit; text-decoration:none; overflow:hidden;
+    background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015)); transform-style:preserve-3d;
+    transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0); transition:transform .5s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .5s; }
+  a.card.is-tilting { transition:transform .08s linear, border-color .35s, box-shadow .5s; }
+  a.card:hover, a.card:focus-visible { border-color:rgba(155,123,255,.55); box-shadow:0 40px 80px -40px rgba(124,92,255,.55); outline:none; }
+  a.card:focus-visible { outline:2px solid var(--teal); outline-offset:4px; }
+  a.card::after { content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit; opacity:0; transition:opacity .4s;
+    background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.18), rgba(255,255,255,.04) 35%, transparent 60%); mix-blend-mode:screen; }
+  a.card:hover::after { opacity:1; }
+  .thumb { position:relative; aspect-ratio:16/10; background:#120f1d center/cover no-repeat; border-bottom:1px solid var(--line); overflow:hidden; }
+  .thumb video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s; transform:translateZ(30px) scale(1.02); }
+  .thumb video.is-playing { opacity:1; }
+  .body { padding:24px 26px 28px; transform:translateZ(24px); }
   .tag { font-size:12px; color:var(--accent); letter-spacing:.08em; text-transform:uppercase; }
-  .card h2 { font-size:26px; margin:10px 0 8px; letter-spacing:-.01em; }
+  .card h2 { font:600 26px/1.15 'Space Grotesk',Inter,sans-serif; margin:10px 0 8px; letter-spacing:-.02em; }
   .card p { color:var(--muted); line-height:1.5; font-size:15px; }
-  .go { margin-top:18px; display:inline-block; font-weight:500; }
+  .go { margin-top:18px; display:inline-flex; gap:8px; font-weight:500; }
+  .go i { font-style:normal; transition:transform .35s cubic-bezier(.2,.8,.2,1); }
+  a.card:hover .go i { transform:translateX(5px); }
   footer { margin-top:64px; color:var(--muted); font-size:13px; }
-  @media (prefers-reduced-motion: reduce) { a.card { transition:none; } a.card:hover { transform:none; } }
+  @media (prefers-reduced-motion: reduce) {
+    a.card, a.card.is-tilting { transition:none; transform:none; }
+    .js h1 .c { animation:none; opacity:1; transform:none; filter:none; }
+    .thumb video { display:none; }
+  }
 </style>
+<script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <main>
   <p class="eyebrow">Luna HQ · Motion demos</p>
-  <h1>Websites that<br>move with you.</h1>
+  <h1 data-chars aria-label="Websites that move with you.">Websites that<br>move with you.</h1>
   <p class="lede">Real 3D, scroll stories, fog that follows your cursor and the small details that make a page feel made by hand. Every demo works on phones and goes still for people who turn motion off.</p>
   <div class="grid">
-    <a class="card" href="lab/">
-      <span class="tag">Showcase</span>
-      <h2>Motion Lab</h2>
-      <p>Every effect in one place: 3D hero, fog cursor, pinned scroll story, text reveals, magnetic buttons, image ripples and page transitions.</p>
-      <span class="go">Open the lab →</span>
+    <a class="card" href="lab/" data-tilt>
+      <div class="thumb" style="background-image:url(media/lab.jpg)"><video muted loop playsinline preload="none" poster="media/lab.jpg" aria-hidden="true" data-src="media/lab.mp4"></video></div>
+      <div class="body">
+        <span class="tag">Showcase</span>
+        <h2>Motion Lab</h2>
+        <p>Every effect in one place: a glass 3D hero, fog cursor, type that melts under your cursor, scroll stories, magnetic buttons and page transitions.</p>
+        <span class="go">Open the lab <i aria-hidden="true">→</i></span>
+      </div>
     </a>
-    <a class="card" href="clinic-premium/">
-      <span class="tag">Cinematic 3D · from $3,500</span>
-      <h2>Clinic, premium</h2>
-      <p>A made-up dental studio in English and Arabic, with a 3D pearl, soft mint mist, pinned services and a curtain to the booking page.</p>
-      <span class="go">Open the demo →</span>
+    <a class="card" href="clinic-premium/" data-tilt>
+      <div class="thumb" style="background-image:url(media/clinic-premium.jpg)"><video muted loop playsinline preload="none" poster="media/clinic-premium.jpg" aria-hidden="true" data-src="media/clinic-premium.mp4"></video></div>
+      <div class="body">
+        <span class="tag">Cinematic 3D · from $3,500</span>
+        <h2>Clinic, premium</h2>
+        <p>A made-up dental studio in English and Arabic: a 3D pearl that follows you down the page, soft mint mist, pool light and a curtain to the booking page.</p>
+        <span class="go">Open the demo <i aria-hidden="true">→</i></span>
+      </div>
     </a>
-    <a class="card" href="clinic/">
-      <span class="tag">Simple · from $300</span>
-      <h2>Clinic, simple</h2>
-      <p>The same made-up clinic as a fast one-page site: services, doctor, hours, map and booking, in English and Arabic.</p>
-      <span class="go">Open the demo →</span>
+    <a class="card" href="clinic/" data-tilt>
+      <div class="thumb" style="background-image:url(media/clinic.jpg)"><video muted loop playsinline preload="none" poster="media/clinic.jpg" aria-hidden="true" data-src="media/clinic.mp4"></video></div>
+      <div class="body">
+        <span class="tag">Simple · from $300</span>
+        <h2>Clinic, simple</h2>
+        <p>The same made-up clinic as a fast one-page site: services, doctor, hours, map and booking, in English and Arabic.</p>
+        <span class="go">Open the demo <i aria-hidden="true">→</i></span>
+      </div>
     </a>
   </div>
   <footer>Demos by Luna HQ. The clinic is made up. lunahq.io</footer>
 </main>
 <script type="module">
-  import { init } from './kit/fog-cursor.js';
-  try { init(document.body, { colors: ['#7c5cff', '#2ad1c9', '#ff5c8a'], strength: 0.16 }); } catch (e) { /* works without fog */ }
+  import { motionOff, lowPower } from './kit/util.js';
+  const still = motionOff();
+  // headline: wrap each letter (words stay unbroken) so it reveals letter by letter on load
+  const h = document.querySelector('[data-chars]');
+  if (h && !still) {
+    let i = 0;
+    h.innerHTML = h.innerHTML.split(/(<br\s*\/?>)/i).map((part) => /^<br/i.test(part) ? part : part.split(' ').filter(Boolean).map((w) =>
+      `<span class="w" aria-hidden="true">${[...w].map((c) => `<span class="c" style="--i:${i++}">${c}</span>`).join('')}</span>`).join(' ')).join('');
+  }
+  // cards tilt toward the cursor with a moving sheen (mouse only)
+  if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('[data-tilt]').forEach((card) => {
+      let raf = 0;
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
+          card.classList.add('is-tilting');
+          card.style.setProperty('--ry', `${(x - 0.5) * 12}deg`); card.style.setProperty('--rx', `${(0.5 - y) * 10}deg`);
+          card.style.setProperty('--mx', `${x * 100}%`); card.style.setProperty('--my', `${y * 100}%`);
+        });
+      });
+      card.addEventListener('pointerleave', () => { cancelAnimationFrame(raf); card.classList.remove('is-tilting');
+        card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); });
+    });
+  }
+  // preview clips: one plays at a time (three decoding at once can halve the frame rate on weaker machines).
+  // Mouse: the hovered or focused card plays, and the first card plays until you point at another.
+  // Touch: the card most in view plays. Clips load only when needed; posters show otherwise.
+  if (!still) {
+    const vids = [...document.querySelectorAll('video[data-src]')];
+    let cur = null;
+    const play = (v) => { if (cur === v) return; if (cur) { cur.pause(); cur.classList.remove('is-playing'); } cur = v;
+      if (!v) return; if (!v.src) v.src = v.dataset.src; v.play().then(() => v.classList.add('is-playing')).catch(() => {}); };
+    if (matchMedia('(hover: hover)').matches) {
+      vids.forEach((v) => { const card = v.closest('a'); card.addEventListener('pointerenter', () => play(v)); card.addEventListener('focus', () => play(v)); });
+      new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !cur) play(e.target); if (!e.isIntersecting && cur === e.target) play(null); }),
+        { threshold: 0.4 }).observe(vids[0]);
+    } else {
+      const seen = new Map();
+      const io = new IntersectionObserver((es) => { es.forEach((e) => seen.set(e.target, e.intersectionRatio));
+        let best = null, br = 0.55; seen.forEach((r, v) => { if (r > br) { best = v; br = r; } }); play(best); }, { threshold: [0, 0.25, 0.55, 0.8, 1] });
+      vids.forEach((v) => io.observe(v));
+    }
+  }
+  // soft fog behind everything (desktop; phones and reduced motion skip it inside the module)
+  if (!lowPower()) import('./kit/fog-cursor.js').then((m) => m.init(document.body, { colors: ['#7c5cff', '#2ad1c9', '#ff5c8a'], strength: 0.13, zIndex: 1 })).catch(() => {});
 </script>
 </body>
 </html>
